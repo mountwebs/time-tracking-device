@@ -12,7 +12,7 @@ def dist_3d(a,b):
   return math.sqrt(dist)
 
 def get_index_shortest_dist(set_point,points):
-  ''' Returns shortest distance between points '''
+  ''' Returns index of shortest distance between points '''
   dists = []
   for point in points:
     dists.append(dist_3d(set_point, point))
