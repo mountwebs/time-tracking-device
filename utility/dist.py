@@ -18,7 +18,6 @@ def get_index_shortest_dist(set_point, points):
     dists = []
     for point in points:
         dists.append(dist_3d(set_point, point))
-        print(dists)
     return dists.index(min(dists))
 
 
