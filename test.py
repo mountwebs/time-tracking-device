@@ -6,6 +6,7 @@ import time
 import gc
 from machine import I2C, Pin, Timer, PWM
 import mpu6050
+import dist
 
 red_led = PWM(Pin(12), 5000)
 blue_led = PWM(Pin(14), 5000)
@@ -111,3 +112,13 @@ def testing():
             start = time.ticks_ms()  # get millisecond counter
 
         print(data)
+
+def get_current_coord():
+    data = get_smoothed_values(n_samples=100)
+    return [int(data['AcZ']), int(data['AcY']), int(data['AcX'])]
+
+
+
+def get_closest_side():
+    position_array = [[14965, 2395, 0],[-410, -14180, 1185],[-2720, 2693, 17093], [-5740, 1970, -15180],[-1970, 18430, 380],[-18270, 2180, 1420]]
+    print(dist.get_index_shortest_dist(get_current_coord(), position_array))

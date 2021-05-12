@@ -1,7 +1,7 @@
 import math
 
-points = [[3, 4, 5], [6, 3, 8], [20, 1, 2], [8, 10, 20]]
-currentPoint = [8, 10, 2]
+# points = [[3, 4, 5], [6, 3, 8], [20, 1, 2], [8, 10, 20]]
+# currentPoint = [8, 10, 2]
 
 
 def dist_3d(a, b):
@@ -21,4 +21,4 @@ def get_index_shortest_dist(set_point, points):
     return dists.index(min(dists))
 
 
-print(get_index_shortest_dist(currentPoint, points))
+# print(get_index_shortest_dist(currentPoint, points))
