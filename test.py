@@ -7,6 +7,7 @@ import gc
 from machine import I2C, Pin, Timer, PWM
 import mpu6050
 import dist
+import os
 
 red_led = PWM(Pin(12), 5000)
 blue_led = PWM(Pin(14), 5000)
@@ -19,6 +20,8 @@ green_led.duty(0)
 i2c = I2C(scl=Pin(5), sda=Pin(4))
 accel = mpu6050.accel(i2c)
 states = []
+
+session = 0
 
 #import webrepl
 # webrepl.start()
@@ -82,11 +85,26 @@ def get_last_state (states):
 
 def get_time_in_state(get_state, states):
     sum = 0
-    for state in states:
-        if state["state"] == get_state and "ended" in state:
-            sum += time.ticks_diff(state["ended"], state["started"])
+    for i in range(len(states)):
+        if states[i]["state"] == get_state and len(states) > i:
+            sum += time.ticks_diff(states[i+1]["started"], states[i]["started"])
     return sum
 
+def parse_log_line(log_line):
+    log_list = log_line.split(",")
+    keys = ["session", "state", "started"]
+    return dict(zip(keys,log_list))
+
+def get_last_session():
+    dir = os.listdir()
+    if not "log.txt" in dir:
+        return 0
+    else:
+        with open("log.txt","r") as f:
+            entry = parse_log_line(list(f)[-1])
+    return entry["session"].strip('\n')
+
+session = int(get_last_session()) + 1
 
 def time_reporter():
     position_array = [[14965, 2395, 0],[-410, -14180, 1185],[-2720, 2693, 17093], [-5740, 1970, -15180],[-1970, 18430, 380],[-18270, 2180, 1420]]
@@ -102,13 +120,29 @@ def time_reporter():
             cur_orientation_started = time.ticks_ms()
             prev_orientation = cur_orientation
 
-        if time.ticks_diff(time.ticks_ms(), cur_orientation_started) > 2000 and get_last_state(states) != cur_orientation:
+        if time.ticks_diff(time.ticks_ms(), cur_orientation_started) > 1500 and get_last_state(states) != cur_orientation:
             now = time.ticks_ms()
-            state = {"state": cur_orientation, "started": now}
-            if len(states): 
-                states[len(states) - 1]["ended"] = now
+            state = {"state": cur_orientation, "started": now, "session": session}
             states.append(state)
+            f = open("log.txt", "a")
+            f.write(str(session) + "," + str(state["state"]) + "," + str(now) + "\n")
+            f.close()
             print(states)
+
+def print_summary(session_selected):
+    state_dict = {}
+    with open("log.txt","r") as f:
+        for l in f:
+            entry = parse_log_line(l)
+            if entry["state"] in state_dict:
+                state_dict[entry["state"]] += entry["state"]
+            else:
+                state_dict[entry["state"]] = entry["state"]
+    print(state_dict)
+            
+    
+
+
 
 
 def testing():
