@@ -9,6 +9,8 @@ import mpu6050
 import dist
 import os
 
+projects = ["None", "Admin", "oppgave", "møte", "noe", "kaos"]
+
 red_led = PWM(Pin(12), 5000)
 blue_led = PWM(Pin(14), 5000)
 green_led = PWM(Pin(13), 5000)
@@ -132,12 +134,17 @@ def time_reporter():
 def print_summary(session_selected):
     state_dict = {}
     with open("log.txt","r") as f:
-        for l in f:
+        lines = f.readlines()
+
+    for i, l in enumerate(lines):
+        if len(lines) - 1 > i:
             entry = parse_log_line(l)
+            next_entry = parse_log_line(lines[i+1])
+            diff = time.ticks_diff(next_entry["started"], entry["started"])
             if entry["state"] in state_dict:
-                state_dict[entry["state"]] += entry["state"]
+                state_dict[entry["state"]] += diff
             else:
-                state_dict[entry["state"]] = entry["state"]
+                state_dict[entry["state"]] = diff
     print(state_dict)
             
     
