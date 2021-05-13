@@ -111,6 +111,7 @@ def time_reporter():
     cur_orientation = None
     prev_orientation = None
     cur_orientation_started = time.ticks_ms()
+    last_state = None
 
     while True:
         acc_data = get_smoothed_values(n_samples=100)
@@ -122,12 +123,15 @@ def time_reporter():
 
         if time.ticks_diff(time.ticks_ms(), cur_orientation_started) > 1500 and get_last_state(states) != cur_orientation:
             now = time.ticks_ms()
-            state = {"state": cur_orientation, "started": now, "session": session}
-            states.append(state)
+            if last_state:
+                duration = time.ticks_diff(last_state["started"], now)  
+                with open("log.txt","a") as f:
+                f.write(str(session) + "," + str(cur_orientation) + "," + str(now) + "," + str(last_state["started"]) + "," + str(duration) + "\n")
+                
             f = open("log.txt", "a")
-            f.write(str(session) + "," + str(state["state"]) + "," + str(now) + "\n")
             f.close()
-            print(states)
+            last_state = {"state": cur_orientation, "started": now, "session": session}
+            print(last_state)
 
 def print_summary(session_selected):
     state_dict = {}
