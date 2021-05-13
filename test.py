@@ -145,11 +145,12 @@ def print_summary(session_selected):
                 state_dict[entry["state"]] += diff
             else:
                 state_dict[entry["state"]] = diff
-    print(state_dict)
+
+    print("\n==Summary==\n")
+    for i, project in enumerate(projects):
+        if state_dict[str(i)]:
+            print(project + ": " + state_dict[str(i)])
             
-    
-
-
 
 
 def testing():
