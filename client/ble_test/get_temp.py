@@ -25,7 +25,7 @@ async def print_services(mac_addr: str):
 mac_addr = (
     "FC:F5:C4:05:31:0A"
     if platform.system() != "Darwin"
-    else "B9EA5233-37EF-4DD6-87A8-2A875E821C46"
+    else "73C7F989-821F-0A6E-E20B-F7EBC97A55C9"
 )
 loop = asyncio.get_event_loop()
 loop.run_until_complete(print_services(mac_addr))
