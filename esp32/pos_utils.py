@@ -19,7 +19,7 @@ red_led.duty(0)
 blue_led.duty(0)
 green_led.duty(0)
 
-i2c = I2C(1, scl=Pin(22), sda=Pin(21)) # esp8266: 5,4, esp32: 22,21
+i2c = I2C(scl=Pin(22), sda=Pin(21)) # esp8266: 5,4, esp32: 22,21
 accel = mpu6050.accel(i2c)
 states = []
 

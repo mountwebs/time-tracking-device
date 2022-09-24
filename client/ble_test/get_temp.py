@@ -14,6 +14,7 @@ from bleak import BleakClient, BleakScanner
 async def print_services(mac_addr: str):
     device = await BleakScanner.find_device_by_address(mac_addr)
     async with BleakClient(device) as client:
+      while True:
         try:
           temp = await client.read_gatt_char(temperature_uuid)
           temp = int.from_bytes(bytes(temp), "little")

@@ -86,8 +86,10 @@ def demo():
     position_array = [[14965, 2395, 0],[-410, -14180, 1185],[-2720, 2693, 17093], [-5740, 1970, -15180],[-1970, 18430, 380],[-18270, 2180, 1420]]
     cur_orientation = None
     prev_orientation = None
-    last_orientation_sent = None
+    last_orientation_sent = 0
     cur_orientation_started = time.ticks_ms()
+
+    last_ble_update_time = time.ticks_ms()
 
     while True:
         acc_data = pos_utils.get_smoothed_values(n_samples=100)
@@ -99,8 +101,14 @@ def demo():
 
         if time.ticks_diff(time.ticks_ms(), cur_orientation_started) > 1500 and last_orientation_sent != cur_orientation:
             temp.set_temperature(cur_orientation, notify=True)
-            print(cur_orientation)
             last_orientation_sent = cur_orientation
+            last_ble_update_time = time.ticks_ms()
+            print(cur_orientation)
+
+        if time.ticks_diff(time.ticks_ms(), last_ble_update_time) > 1000:
+            temp.set_temperature(last_orientation_sent)
+            last_ble_update_time = time.ticks_ms()
+            print(cur_orientation)
 
 
 if __name__ == "__main__":
