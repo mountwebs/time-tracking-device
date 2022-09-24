@@ -93,5 +93,4 @@ def demo():
         time.sleep_ms(1000)
 
 
-if __name__ == "__main__":
-    demo()
+demo()
